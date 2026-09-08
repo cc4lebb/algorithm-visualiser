@@ -28,14 +28,16 @@ impl Vertex {
         }
     }
 }
-
 const VERTICES: &[Vertex] = &[
-    Vertex { position: [0.0, 0.5, 0.0], color: [1.0, 0.0, 0.0] },
-    Vertex { position: [-0.5, -0.5, 0.0], color: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.5, -0.5, 0.0], color: [0.0, 0.0, 1.0] },
+    Vertex { position: [-0.5,  0.5, 0.0], color: [0.8, 0.2, 0.2] }, // 0: Top-Left
+    Vertex { position: [-0.5, -0.5, 0.0], color: [0.8, 0.2, 0.2] }, // 1: Bottom-Left
+    Vertex { position: [ 0.5, -0.5, 0.0], color: [0.8, 0.2, 0.2] }, // 2: Bottom-Right
+    Vertex { position: [ 0.5,  0.5, 0.0], color: [0.8, 0.2, 0.2] }, // 3: Top-Right
 ];
 
-pub fn create_buffer(device: &wgpu::Device) -> (wgpu::Buffer, u32) {
+const RECT_INDICES: &[u16] = &[0, 1, 2, 0, 2, 3];
+
+pub fn create_buffer(device: &wgpu::Device) -> (wgpu::Buffer, wgpu::Buffer, u32) {
     let vertex_buffer = device.create_buffer_init(
         &wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
@@ -43,8 +45,16 @@ pub fn create_buffer(device: &wgpu::Device) -> (wgpu::Buffer, u32) {
             usage: wgpu::BufferUsages::VERTEX,
         }
     );
+
+    let index_buffer = device.create_buffer_init(
+        &wgpu::util::BufferInitDescriptor {
+            label: Some("Test Index Buffer"),
+            contents: bytemuck::cast_slice(RECT_INDICES),
+            usage: wgpu::BufferUsages::INDEX
+        }
+    );
     
-    let num_vertices = VERTICES.len() as u32;
-    (vertex_buffer, num_vertices)
+    (vertex_buffer, index_buffer, RECT_INDICES.len() as u32)
+
 }
 
