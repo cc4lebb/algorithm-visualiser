@@ -5,3 +5,4 @@ use winit::platform::web::EventLoopExtWebSys;
 
 pub mod app;
 pub mod window;
+pub mod renderer;
