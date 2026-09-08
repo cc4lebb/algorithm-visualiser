@@ -1,4 +1,5 @@
 use wgpu::{Device, RenderPipeline, SurfaceConfiguration};
+use crate::renderer::buffer::Vertex;
 
 pub fn create_pipeline(device: &Device, config: &SurfaceConfiguration) -> RenderPipeline {
     let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
@@ -19,7 +20,7 @@ pub fn create_pipeline(device: &Device, config: &SurfaceConfiguration) -> Render
         vertex: wgpu::VertexState {
             module: &shader,
             entry_point: Some("vs_main"),
-            buffers: &[],
+            buffers: &[Some(Vertex::desc())],
             compilation_options: wgpu::PipelineCompilationOptions::default(),
         },
         fragment: Some(wgpu::FragmentState {

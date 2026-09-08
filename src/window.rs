@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::renderer::pipeline;
+use crate::renderer::{pipeline, buffer};
 
 use winit::event_loop::ActiveEventLoop;
 use winit::keyboard::KeyCode;
@@ -14,6 +14,8 @@ pub struct State {
     is_surface_configured: bool,
     window: Arc<Window>,
     render_pipeline: wgpu::RenderPipeline,
+    vertex_buffer: wgpu::Buffer,
+    num_vertices: u32,
 }
 
 impl State {
@@ -81,8 +83,12 @@ impl State {
             desired_maximum_frame_latency: 2,
             color_space: wgpu::SurfaceColorSpace::Auto,
         };
-
+        
+        // render pipeline
         let render_pipeline = pipeline::create_pipeline(&device, &config);
+
+        // vertex buffer
+        let (vertex_buffer, num_vertices) = buffer::create_buffer(&device);
 
         Ok(Self {
             surface,
@@ -90,8 +96,10 @@ impl State {
             queue,
             config,
             is_surface_configured: false,
-            render_pipeline,
             window,
+            render_pipeline,
+            vertex_buffer,
+            num_vertices,
         })
     }
 
@@ -166,7 +174,8 @@ impl State {
             });
 
             render_pass.set_pipeline(&self.render_pipeline); 
-            render_pass.draw(0..3, 0..1); 
+            render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
+            render_pass.draw(0..self.num_vertices, 0..1); 
         }
 
         self.queue.submit(std::iter::once(encoder.finish()));
