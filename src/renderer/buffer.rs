@@ -39,9 +39,12 @@ pub fn create_bar_buffers(device: &wgpu::Device, values: &[f32]) ->
     let count = values.len() as f32;
     let bar_width = 2.0 / count;
 
+    let bar_gap = bar_width * 0.10;
+    
+
     for (i, &val) in values.iter().enumerate(){
-        let min_x = -1.0 + (i as f32 * bar_width);
-        let max_x = min_x + bar_width;
+        let min_x = -1.0 + (i as f32 * bar_width) + bar_gap;
+        let max_x = min_x + bar_width - bar_gap;
         let min_y = -1.0;
         let max_y = min_y + (val * 2.0);
 

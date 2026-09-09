@@ -180,6 +180,17 @@ impl State {
                 timestamp_writes: None,
                 multiview_mask: None,
             });
+            
+            let ui_height = 100.0;
+
+            render_pass.set_viewport(
+                0.0,
+                0.0,
+                self.config.width as f32,
+                self.config.height as f32 - ui_height,
+                0.0,
+                0.1,
+            );
 
             render_pass.set_pipeline(&self.render_pipeline); 
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
