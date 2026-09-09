@@ -16,7 +16,8 @@ pub struct State {
     render_pipeline: wgpu::RenderPipeline,
     vertex_buffer: wgpu::Buffer,
     index_buffer: wgpu::Buffer,
-    num_vertices: u32,
+    num_indices: u32,
+    values: Vec<f32>,
 }
 
 impl State {
@@ -89,7 +90,10 @@ impl State {
         let render_pipeline = pipeline::create_pipeline(&device, &config);
 
         // vertex buffer
-        let (vertex_buffer, index_buffer, num_vertices) = buffer::create_buffer(&device);
+        let values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 1.0];
+
+        let (vertex_buffer, index_buffer, num_indices) = 
+            buffer::create_bar_buffers(&device, &values);
 
         Ok(Self {
             surface,
@@ -101,7 +105,9 @@ impl State {
             render_pipeline,
             vertex_buffer,
             index_buffer,
-            num_vertices,
+            num_indices,
+            values,
+            
         })
     }
 
@@ -178,7 +184,7 @@ impl State {
             render_pass.set_pipeline(&self.render_pipeline); 
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
-            render_pass.draw_indexed(0..self.num_vertices, 0, 0..1); 
+            render_pass.draw_indexed(0..self.num_indices, 0, 0..1); 
         }
 
         self.queue.submit(std::iter::once(encoder.finish()));
