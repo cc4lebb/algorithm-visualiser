@@ -122,8 +122,6 @@ impl State {
         }
     }
 
-    pub fn update(&mut self) {}
-
     pub fn render(&mut self) -> anyhow::Result<()> {
         self.window.request_redraw();
 
@@ -181,7 +179,7 @@ impl State {
                 multiview_mask: None,
             });
             
-            let ui_height = 100.0;
+            let ui_height = 175.0;
 
             render_pass.set_viewport(
                 0.0,
