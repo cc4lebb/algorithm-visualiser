@@ -86,12 +86,11 @@ impl State {
             color_space: wgpu::SurfaceColorSpace::Auto,
         };
         
-        // render pipeline
         let render_pipeline = pipeline::create_pipeline(&device, &config);
 
-        // vertex buffer
-        let values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 1.0];
-
+        let mut values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 0.9];
+        
+        // buffer stuff
         let (vertex_buffer, index_buffer, num_indices) = 
             buffer::create_bar_buffers(&device, &values);
 
@@ -120,6 +119,10 @@ impl State {
             self.surface.configure(&self.device, &self.config);
             self.is_surface_configured = true;
         }
+    }
+
+    pub fn update(&mut self) {
+
     }
 
     pub fn render(&mut self) -> anyhow::Result<()> {
