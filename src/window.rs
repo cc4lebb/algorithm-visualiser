@@ -6,18 +6,26 @@ use winit::event_loop::ActiveEventLoop;
 use winit::keyboard::KeyCode;
 use winit::window::Window;
 
+use std::time::{Duration, Instant};
+
+use crate::algorithms::sorting::BubbleSort;
+
 pub struct State {
-    surface: wgpu::Surface<'static>,
-    device: wgpu::Device,
-    queue: wgpu::Queue,
-    config: wgpu::SurfaceConfiguration,
-    is_surface_configured: bool,
-    window: Arc<Window>,
-    render_pipeline: wgpu::RenderPipeline,
-    vertex_buffer: wgpu::Buffer,
-    index_buffer: wgpu::Buffer,
-    num_indices: u32,
-    values: Vec<f32>,
+   pub surface: wgpu::Surface<'static>,
+   pub device: wgpu::Device,
+   pub queue: wgpu::Queue,
+   pub config: wgpu::SurfaceConfiguration,
+   pub is_surface_configured: bool,
+   pub window: Arc<Window>,
+   pub render_pipeline: wgpu::RenderPipeline,
+   pub vertex_buffer: wgpu::Buffer,
+   pub index_buffer: wgpu::Buffer,
+   pub num_indices: u32,
+   pub values: Vec<f32>,
+   pub last_step: Instant,
+   pub step_delay: Duration,
+   pub sorter: BubbleSort,
+   
 }
 
 impl State {
@@ -86,12 +94,11 @@ impl State {
             color_space: wgpu::SurfaceColorSpace::Auto,
         };
         
-        // render pipeline
         let render_pipeline = pipeline::create_pipeline(&device, &config);
 
-        // vertex buffer
-        let values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 1.0];
+        let mut values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 0.9];
 
+        
         let (vertex_buffer, index_buffer, num_indices) = 
             buffer::create_bar_buffers(&device, &values);
 
@@ -107,7 +114,9 @@ impl State {
             index_buffer,
             num_indices,
             values,
-            
+            last_step: Instant::now(),
+            step_delay: Duration::from_millis(250),
+            sorter: BubbleSort::new(),
         })
     }
 
@@ -122,7 +131,14 @@ impl State {
         }
     }
 
-    pub fn update(&mut self) {}
+    pub fn update(&mut self) {
+        if !self.sorter.is_sorted && self.last_step.elapsed() >= self.step_delay {
+            self.sorter.step(&mut self.values);
+            buffer::update_bar_vertices(&self.queue, &self.vertex_buffer, &self.values);
+
+            self.last_step = Instant::now();
+        }
+    }
 
     pub fn render(&mut self) -> anyhow::Result<()> {
         self.window.request_redraw();
@@ -181,7 +197,7 @@ impl State {
                 multiview_mask: None,
             });
             
-            let ui_height = 100.0;
+            let ui_height = 175.0;
 
             render_pass.set_viewport(
                 0.0,
