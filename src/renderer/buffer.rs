@@ -1,4 +1,3 @@
-
 use wgpu::util::DeviceExt;
 
 
@@ -49,6 +48,8 @@ pub fn create_bar_buffers(device: &wgpu::Device, values: &[f32]) ->
         let min_y = -1.0;
         let max_y = min_y + (val * 2.0);
 
+        let vertex_offset = (i * 4) as u16;
+
         vertices.extend_from_slice(&[
             Vertex { position: [min_x, max_y, 0.0], color: [0.0, 0.2, 0.1] },
             Vertex { position: [min_x, min_y, 0.0], color: [0.0, 0.2, 0.1] },
@@ -56,8 +57,6 @@ pub fn create_bar_buffers(device: &wgpu::Device, values: &[f32]) ->
             Vertex { position: [max_x, max_y, 0.0], color: [0.0, 0.2, 0.1] },
         ]);
 
-        let vertex_offset = (i * 4) as u16;
-        
         for &idx in RECT_INDICES {
            indices.push(vertex_offset + idx); 
         }
