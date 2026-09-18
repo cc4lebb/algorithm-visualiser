@@ -96,7 +96,7 @@ impl State {
         
         let render_pipeline = pipeline::create_pipeline(&device, &config);
 
-        let mut values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 0.9];
+        let values = vec![0.1, 0.7, 0.3, 0.9, 0.5, 0.2, 0.8, 0.4, 0.6, 0.9];
 
         
         let (vertex_buffer, index_buffer, num_indices) = 

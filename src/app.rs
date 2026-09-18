@@ -102,7 +102,7 @@ impl ApplicationHandler<State> for App {
             WindowEvent::Resized(size) => state.resize(size.width, size.height),
             WindowEvent::RedrawRequested => {
                 state.update();
-                state.render();
+                let _ = state.render();
                 state.window.request_redraw();
             }
             WindowEvent::KeyboardInput {
