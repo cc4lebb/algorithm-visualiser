@@ -34,8 +34,44 @@ const RECT_INDICES: &[u16] = &[0, 1, 2, 0, 2, 3];
 
 pub fn create_bar_buffers(device: &wgpu::Device, values: &[f32]) -> 
 (wgpu::Buffer, wgpu::Buffer, u32) {
-    let mut vertices = Vec::with_capacity(values.len() * 4);
+    let vertices = generate_bar_vertices(values);
     let mut indices = Vec::with_capacity(values.len() * 6);
+    
+    for i in 0..values.len() {
+        let vertex_offset = (i * 4) as u16;
+            
+        for &idx in RECT_INDICES {
+            indices.push(vertex_offset + idx); 
+        }
+    }
+
+    let vertex_buffer = device.create_buffer_init(
+            &wgpu::util::BufferInitDescriptor {
+                label: Some("Vertex Buffer"),
+                contents: bytemuck::cast_slice(&vertices),
+                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            }
+        );
+
+        let index_buffer = device.create_buffer_init(
+            &wgpu::util::BufferInitDescriptor {
+                label: Some("Test Index Buffer"),
+                contents: bytemuck::cast_slice(&indices),
+                usage: wgpu::BufferUsages::INDEX
+            }
+        );
+        
+        (vertex_buffer, index_buffer, indices.len() as u32)
+}
+
+pub fn update_bar_vertices(queue: &wgpu::Queue, vertex_buffer: &wgpu::Buffer, values: &[f32]) {
+    let vertices = generate_bar_vertices(values);
+    queue.write_buffer(vertex_buffer, 0, bytemuck::cast_slice(&vertices));
+}
+
+fn generate_bar_vertices (values: &[f32]) -> Vec<Vertex> {
+
+    let mut vertices = Vec::with_capacity(values.len() * 4);
 
     let count = values.len() as f32;
     let bar_width = 2.0 / count;
@@ -55,31 +91,8 @@ pub fn create_bar_buffers(device: &wgpu::Device, values: &[f32]) ->
             Vertex { position: [max_x, min_y, 0.0], color: [0.0, 0.2, 0.1] },
             Vertex { position: [max_x, max_y, 0.0], color: [0.0, 0.2, 0.1] },
         ]);
-
-        let vertex_offset = (i * 4) as u16;
-        
-        for &idx in RECT_INDICES {
-           indices.push(vertex_offset + idx); 
-        }
     }
-
-    let vertex_buffer = device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
-                label: Some("Vertex Buffer"),
-                contents: bytemuck::cast_slice(&vertices),
-                usage: wgpu::BufferUsages::VERTEX,
-            }
-        );
-
-        let index_buffer = device.create_buffer_init(
-            &wgpu::util::BufferInitDescriptor {
-                label: Some("Test Index Buffer"),
-                contents: bytemuck::cast_slice(&indices),
-                usage: wgpu::BufferUsages::INDEX
-            }
-        );
-        
-        (vertex_buffer, index_buffer, indices.len() as u32)
-
-
+    vertices
 }
+
+

@@ -101,7 +101,9 @@ impl ApplicationHandler<State> for App {
             WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Resized(size) => state.resize(size.width, size.height),
             WindowEvent::RedrawRequested => {
-                state.render().expect("failed to render");
+                state.update();
+                state.render();
+                state.window.request_redraw();
             }
             WindowEvent::KeyboardInput {
                 event:
