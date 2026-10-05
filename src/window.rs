@@ -8,7 +8,7 @@ use winit::window::Window;
 
 use std::time::{Duration, Instant};
 
-use crate::algorithms::sorting::BubbleSort;
+use crate::algorithms::sorting::SelectionSort;
 
 pub struct State {
    pub surface: wgpu::Surface<'static>,
@@ -24,7 +24,7 @@ pub struct State {
    pub values: Vec<f32>,
    pub last_step: Instant,
    pub step_delay: Duration,
-   pub sorter: BubbleSort,
+   pub sorter: SelectionSort,
    
 }
 
@@ -116,7 +116,7 @@ impl State {
             values,
             last_step: Instant::now(),
             step_delay: Duration::from_millis(250),
-            sorter: BubbleSort::new(),
+            sorter: SelectionSort::new(),
         })
     }
 
