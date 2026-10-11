@@ -14,6 +14,11 @@ High performance visualiser for different algorithms using Rust and WGPU. Rather
 - [ ] Quick Sort
 - [ ] Merge Sort
 
+## selection sort example:
+https://github.com/user-attachments/assets/4c2c14a2-9cb0-4163-89aa-03100d6bcc5b
+
+
+
 ## Need to implement:
 - [ ] Selecting different algorithms (currently need to update code in order to change rather than using a dedicated UI).
 - [ ] Add support for custom array inputs and dynamic array sizing. 
