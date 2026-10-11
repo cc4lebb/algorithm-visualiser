@@ -1,4 +1,6 @@
-##Usage
+# Rust Algorithm Visualiser 
+
+## Usage 
 High performance visualiser for different algorithms using Rust and WGPU. Rather than using OpenGL or Vulkan, this project leverages `wgpu` to take advantage of Rust's compile-time and memory safety while maintaining modern, cross-platform graphics capabilities.
 
 ##Technology Stack
